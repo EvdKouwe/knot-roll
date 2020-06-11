@@ -1,14 +1,14 @@
 
-install.packages("tidyverse")
-install.packages("Rmisc")
-install.packages("reshape")
-install.packages("gridExtra")
-install.packages("cowplot")
-install.packages("grid")
-install.packages("rmarkdown")
-install.packages("gdata")
-install.packages("rio")
-install.packages("janitor")
+# install.packages("tidyverse")
+# install.packages("Rmisc")
+# install.packages("reshape")
+# install.packages("gridExtra")
+# install.packages("cowplot")
+# install.packages("grid")
+# install.packages("rmarkdown")
+# install.packages("gdata")
+# install.packages("rio")
+# install.packages("janitor")
 
 
 
