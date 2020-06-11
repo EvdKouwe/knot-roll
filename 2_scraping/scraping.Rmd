@@ -20,7 +20,8 @@ keep(covid19, world_pop, sure = TRUE)
 
 ```{r inspect HTML}
 url = "https://en.wikipedia.org/wiki/List_of_people_on_banknotes"
-url2 = html('https://en.wikipedia.org/wiki/List_of_people_on_banknotes')
+url2 = read_html("https://en.wikipedia.org/wiki/List_of_people_on_banknotes") 
+
 url_eft = "https://escapefromtarkov.gamepedia.com/Ballistics"
 ```
 
@@ -28,9 +29,26 @@ url_eft = "https://escapefromtarkov.gamepedia.com/Ballistics"
 
 sample = url %>%
   read_html() %>%
+  html_node("body")
+
+sample2 = sample %>%
+  read_html() %>%
+  html_node("body")
+str(sample)
+    
+    
+# use # in front of an "id" element
+# use . in front of a "class" element
+# use a, div, h1, h2, h3 or body to get into the specified chunk
+
+sample = url %>%
+  read_html() %>%
   html_node('body #content #bodyContent #mw-content-text .mw-parser-output table') %>%
   html_table(fill = TRUE)
 str(sample)
+
+
+#/html/body/div[3]/div[3]/div[4]/div/table[2]/tbody/tr[1]/th[2]
 ```
 
 ```{r simple case}
