@@ -39,7 +39,7 @@ keep(r_askd_qpcr, sure = TRUE)
 ```
 
 ```{r inspect HTML}
-url = 'https://en.wikipedia.org/wiki/List_of_people_on_banknotes'
+url = "https://en.wikipedia.org/wiki/List_of_people_on_banknotes"
 url2 = html('https://en.wikipedia.org/wiki/List_of_people_on_banknotes')
 
 url_eft = "https://escapefromtarkov.gamepedia.com/Ballistics"
