@@ -1,0 +1,26 @@
+
+```{r packages download}
+install.packages("tidyverse")
+install.packages("rmarkdown")
+install.packages("rio")
+install.packages("rvest")
+```
+
+```{r packages}
+library(tidyverse)
+library(rmarkdown)
+library(rio)
+library(rvest)
+```
+
+```{r import and reset button}
+# reset for a clean start
+keep(covid19, world_pop, sure = TRUE)
+```
+
+```{r weatherforecast}
+
+
+
+
+```
