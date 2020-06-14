@@ -1,16 +1,14 @@
 
-install.packages("tidyverse")
-install.packages("Rmisc")
-install.packages("reshape")
-install.packages("gridExtra")
-install.packages("cowplot")
-install.packages("grid")
-install.packages("rmarkdown")
-install.packages("gdata")
-install.packages("rio")
-install.packages("janitor")
-
-
+# install.packages("tidyverse")
+# install.packages("Rmisc")
+# install.packages("reshape")
+# install.packages("gridExtra")
+# install.packages("cowplot")
+# install.packages("grid")
+# install.packages("rmarkdown")
+# install.packages("gdata")
+# install.packages("rio")
+# install.packages("janitor")
 
 library(tidyverse)
 library(Rmisc)
@@ -23,12 +21,11 @@ library(gdata)
 library(rio)
 
 
-
 # daily covid19 statistics per day per country
 import("https://www.ecdc.europa.eu/sites/default/files/documents/COVID-19-geographic-disbtribution-worldwide.xlsx") -> covid19
 
 # file with population number per country. to be trimmed
-import("r_pop_per_country_over_time.xls") %>%
+import("C:/Users/Eccho/Documents/Git/knot-roll/2_scraping/r_pop_per_country_over_time.xls") %>%
   slice(4:268) %>%
   select(country=1, country_code=2, pop=63) %>%
   drop_na() %>%
@@ -36,8 +33,6 @@ import("r_pop_per_country_over_time.xls") %>%
 
 # reset for a clean start
 keep(covid19, world_pop, sure = TRUE)
-
-
 
 text <- 10
 last_date <- covid19$dateRep[1]
