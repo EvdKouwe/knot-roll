@@ -4,6 +4,9 @@ install.packages("tidyverse")
 install.packages("rmarkdown")
 install.packages("rio")
 install.packages("rvest")
+install.packages("rlist")
+install.packages("stringi")
+install.packages("htmltab")
 ```
 
 ```{r packages}
@@ -11,54 +14,126 @@ library(tidyverse)
 library(rmarkdown)
 library(rio)
 library(rvest)
+library(rlist)
+library(stringi)
+library(htmltab)
 ```
 
 ```{r import and reset button}
 # reset for a clean start
-keep(covid19, world_pop, sure = TRUE)
+rm(list = ls())
+# keep(covid19, world_pop, sure = TRUE)
 ```
 
-```{r inspect HTML}
+```{r TEST urlS}
 url = "https://en.wikipedia.org/wiki/List_of_people_on_banknotes"
 url2 = read_html("https://en.wikipedia.org/wiki/List_of_people_on_banknotes") 
 
 url_eft = "https://escapefromtarkov.gamepedia.com/Ballistics"
 ```
 
-```{r simple case}
+```{r banknote example}
 
-sample = url %>%
-  read_html() %>%
-  html_node("body")
+# ---------------------------------------------------------
+# Rvest in action: list of people on bank notes 
+# https://en.wikipedia.org/wiki/List_of_people_on_banknotes
+# Author: Kyle Akepanidtaworn, Data Scientist
+# https://www.linkedin.com/in/korkridakepan/
+# © Copyright 2018, Kyle Akepanidtaworn, All rights reserved.
+# ---------------------------------------------------------
 
-sample2 = sample %>%
-  read_html() %>%
-  html_node("body")
-str(sample)
-    
-    
-# use # in front of an "id" element
-# use . in front of a "class" element
-# use a, div, h1, h2, h3 or body to get into the specified chunk
 
-sample = url %>%
+
+
+# ---------------------------------------------------------
+# Step 1: Import Library
+# ---------------------------------------------------------
+library(tidyverse)
+library(rvest)
+library(rlist)
+library(stringi)
+library(htmltab)
+
+
+
+# ---------------------------------------------------------
+# Step 2: Inspect HTML
+# ---------------------------------------------------------
+url = 'https://en.wikipedia.org/wiki/List_of_people_on_banknotes'
+url2 = html('https://en.wikipedia.org/wiki/List_of_people_on_banknotes')
+
+#EFT example
+url_eft = "https://escapefromtarkov.gamepedia.com/Ballistics"
+
+
+
+# ---------------------------------------------------------
+# Simple Cases
+# ---------------------------------------------------------
+sample <- url %>%
   read_html() %>%
-  html_node('body #content #bodyContent #mw-content-text .mw-parser-output table') %>%
+  html_node('body')
+
+sample <- url %>%
+  read_html() %>%
+  html_node('body #content')
+print(sample)
+
+# use # in front of "id" elements
+# use . in front of "class" elements
+# use a, div, h1, h2, h3 or body to get that chunk out
+
+
+
+
+
+# Return a data frame
+sample2 = url %>%
+  read_html() %>%
+  html_node(xpath = '//*[@id="mw-content-text"]/div/table[1]') %>%
   html_table(fill = TRUE)
-str(sample)
+
+# Return a list
+sample3 = url %>%
+  read_html() %>%
+  html_nodes(xpath = '//*[@id="mw-content-text"]/div/table[1]') %>%
+  html_table(fill = TRUE)
+sample3 = sample3[[1]]
 
 
-#/html/body/div[3]/div[3]/div[4]/div/table[2]/tbody/tr[1]/th[2]
 ```
 
-```{r simple case}
+```{r banknote example follow-up}
+# ---------------------------------------------------------
+# Rvest in action: list of people on bank notes 
+# https://en.wikipedia.org/wiki/List_of_people_on_banknotes
+# Author: Kyle Akepanidtaworn, Data Scientist
+# https://www.linkedin.com/in/korkridakepan/
+# © Copyright 2018, Kyle Akepanidtaworn, All rights reserved.
+# ---------------------------------------------------------
 
-sample2 = url_eft %>%
+# ---------------------------------------------------------
+# Step 1: Import Library
+# ---------------------------------------------------------
+library(tidyverse)
+library(rvest)
+library(rlist)
+library(stringi)
+library(htmltab)
+
+# ---------------------------------------------------------
+# Step 2: Inspect HTML
+# ---------------------------------------------------------
+url = 'https://en.wikipedia.org/wiki/List_of_people_on_banknotes'
+url2 = html('https://en.wikipedia.org/wiki/List_of_people_on_banknotes')
+
+# ---------------------------------------------------------
+# Simple Cases
+# ---------------------------------------------------------
+sample = url %>%
   read_html() %>%
   html_node('body #content #bodyContent #mw-content-text .mw-parser-output table') %>%
   html_table(fill = TRUE)
-str(sample)
-
 
 # Return a data frame
 sample2 = url %>%
@@ -237,13 +312,5 @@ df_all = df_all[, c('iteration',
 
 # export the csv file
 write_excel_csv(df_all, '../Playground/Bank_Notes-Wiki_Webscraping/output_bank_notes/wiki_bank_notes_data.csv')
-
-```
-
-```{r export}
-graph_h = 2
-graph_w = 4
-
-ggsave(filename = "p_askd_qpcr.tiff", p_askd_qpcr, width = graph_w, height = graph_h, dpi = 400, units = "in", device='tiff')
 
 ```
