@@ -32,130 +32,76 @@ url2 = read_html("https://en.wikipedia.org/wiki/List_of_people_on_banknotes")
 url_eft = "https://escapefromtarkov.gamepedia.com/Ballistics"
 ```
 
-```{r banknote example}
+```{r inspect HTML}
 
-# ---------------------------------------------------------
-# Rvest in action: list of people on bank notes 
-# https://en.wikipedia.org/wiki/List_of_people_on_banknotes
-# Author: Kyle Akepanidtaworn, Data Scientist
-# https://www.linkedin.com/in/korkridakepan/
-# © Copyright 2018, Kyle Akepanidtaworn, All rights reserved.
-# ---------------------------------------------------------
+# XPath from the first table containing Abkhazia
+# /html/body/div[3]/div[3]/div[4]/div/table[1]
 
-
-
-
-# ---------------------------------------------------------
-# Step 1: Import Library
-# ---------------------------------------------------------
-library(tidyverse)
-library(rvest)
-library(rlist)
-library(stringi)
-library(htmltab)
-
-
-
-# ---------------------------------------------------------
-# Step 2: Inspect HTML
-# ---------------------------------------------------------
-url = 'https://en.wikipedia.org/wiki/List_of_people_on_banknotes'
-url2 = html('https://en.wikipedia.org/wiki/List_of_people_on_banknotes')
-
-#EFT example
-url_eft = "https://escapefromtarkov.gamepedia.com/Ballistics"
-
-
-
-# ---------------------------------------------------------
-# Simple Cases
-# ---------------------------------------------------------
-sample <- url %>%
+url %>%
   read_html() %>%
-  html_node('body')
+  html_node("body")
+# /html/body
 
-sample <- url %>%
+url %>%
   read_html() %>%
-  html_node('body #content')
-print(sample)
+  html_node("body #content")
+# /html/body/div[3]
+# Which is the THIRD div under the upper body
 
-# use # in front of "id" elements
-# use . in front of "class" elements
-# use a, div, h1, h2, h3 or body to get that chunk out
-
-
-
-
-
-# Return a data frame
-sample2 = url %>%
+url %>%
   read_html() %>%
-  html_node(xpath = '//*[@id="mw-content-text"]/div/table[1]') %>%
-  html_table(fill = TRUE)
+  html_node("body #content #bodyContent #mw-content-text")
+# /html/body/div[3]/div[3]/div[4]
+# Which is the FOURTH div under the upper body
 
-# Return a list
-sample3 = url %>%
+url %>%
   read_html() %>%
-  html_nodes(xpath = '//*[@id="mw-content-text"]/div/table[1]') %>%
-  html_table(fill = TRUE)
-sample3 = sample3[[1]]
+  html_node("body #content #bodyContent #mw-content-text .mw-parser-output h3 .mw-headline")
 
-
-```
-
-```{r banknote example follow-up}
-# ---------------------------------------------------------
-# Rvest in action: list of people on bank notes 
-# https://en.wikipedia.org/wiki/List_of_people_on_banknotes
-# Author: Kyle Akepanidtaworn, Data Scientist
-# https://www.linkedin.com/in/korkridakepan/
-# © Copyright 2018, Kyle Akepanidtaworn, All rights reserved.
-# ---------------------------------------------------------
-
-# ---------------------------------------------------------
-# Step 1: Import Library
-# ---------------------------------------------------------
-library(tidyverse)
-library(rvest)
-library(rlist)
-library(stringi)
-library(htmltab)
-
-# ---------------------------------------------------------
-# Step 2: Inspect HTML
-# ---------------------------------------------------------
-url = 'https://en.wikipedia.org/wiki/List_of_people_on_banknotes'
-url2 = html('https://en.wikipedia.org/wiki/List_of_people_on_banknotes')
-
-# ---------------------------------------------------------
-# Simple Cases
-# ---------------------------------------------------------
-sample = url %>%
+# Both return a data frame
+sample1 = url %>%
   read_html() %>%
   html_node('body #content #bodyContent #mw-content-text .mw-parser-output table') %>%
   html_table(fill = TRUE)
 
-# Return a data frame
 sample2 = url %>%
   read_html() %>%
   html_node(xpath = '//*[@id="mw-content-text"]/div/table[1]') %>%
   html_table(fill = TRUE)
 
-# Return a list
+sample1 == sample2 # All true, same dataframe
+
+# Returns a list instead of a dataframe
 sample3 = url %>%
   read_html() %>%
   html_nodes(xpath = '//*[@id="mw-content-text"]/div/table[1]') %>%
   html_table(fill = TRUE)
-sample3 = sample3[[1]]
 
-sample_all = rbind(sample, sample2, sample3)
+sample3[[1]] == sample2 # All true, same dataframe when you call the first element of sample3
 
 # Language of rvest
 # Use # in front of 'id' element
 # Use . in front of 'class' element
 # Use a, div, h1, h2, h3, or body to get into that chunk
 
+```
+
+```{r calling the tables}
+
 # html_node (get only the top one) vs. html_nodes (get multiple of them)
+
+
+countries = url2 %>%
+  html_nodes("body #content #bodyContent #mw-content-text .mw-parser-output h3 .mw-headline") %>%
+  html_text() %>%
+  as.character()
+
+
+
+
+```
+
+```{r calling the tables}
 countries = url2 %>%
   html_nodes("body #content #bodyContent #mw-content-text .mw-parser-output h3 .mw-headline") %>%
   html_text() %>%
@@ -177,7 +123,7 @@ num_tables = url2 %>%
   length() %>%
   as.character()
 print(paste('There are', num_tables, 'tables in total'))
-
+str(num_tables)
 # This condition needs to be true to proceeed
 length(countries) == num_tables # TRUE
 
