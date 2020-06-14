@@ -34,6 +34,8 @@ url_eft = "https://escapefromtarkov.gamepedia.com/Ballistics"
 
 ```{r inspect HTML}
 
+# tutorial: https://medium.com/@kyleake/wikipedia-data-scraping-with-r-rvest-in-action-3c419db9af2d
+
 # XPath from the first table containing Abkhazia
 # /html/body/div[3]/div[3]/div[4]/div/table[1]
 
@@ -84,6 +86,25 @@ sample3[[1]] == sample2 # All true, same dataframe when you call the first eleme
 # Use . in front of 'class' element
 # Use a, div, h1, h2, h3, or body to get into that chunk
 
+
+
+
+
+# EFT
+#/html/body/div[2]/div[3]/div[1]/div[4]/div[4]/div/table[2]
+
+table_eft <- url_eft %>%
+  read_html() %>%
+  html_node("body #global-wrapper #pageWrapper #content #bodyContent #mw-content-text .mw-parser-output table") %>%
+  html_table(fill = TRUE)
+
+table_eft <- url_eft %>%
+  read_html() %>%
+  html_node(xpath = '//*[@id="mw-content-text"]/div/table[2]') %>%
+  html_table(fill = TRUE)
+
+view(table_eft)
+
 ```
 
 ```{r calling the tables}
@@ -92,7 +113,7 @@ sample3[[1]] == sample2 # All true, same dataframe when you call the first eleme
 
 
 countries = url2 %>%
-  html_nodes("body #content #bodyContent #mw-content-text .mw-parser-output h3 .mw-headline") %>%
+  html_nodes("body #content #bodyContent #mw-content-text .mw-parser-output h3 .mw-headline ") %>%
   html_text() %>%
   as.character()
 
