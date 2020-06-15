@@ -4,6 +4,9 @@ install.packages("tidyverse")
 install.packages("rmarkdown")
 install.packages("rio")
 install.packages("rvest")
+install.packages("rlist")
+install.packages("stringi")
+install.packages("htmltab")
 ```
 
 ```{r packages}
@@ -11,76 +14,115 @@ library(tidyverse)
 library(rmarkdown)
 library(rio)
 library(rvest)
+library(rlist)
+library(stringi)
+library(htmltab)
 ```
 
 ```{r import and reset button}
 # reset for a clean start
-keep(covid19, world_pop, sure = TRUE)
+rm(list = ls())
+# keep(covid19, world_pop, sure = TRUE)
 ```
 
-```{r inspect HTML}
+```{r TEST urlS}
 url = "https://en.wikipedia.org/wiki/List_of_people_on_banknotes"
 url2 = read_html("https://en.wikipedia.org/wiki/List_of_people_on_banknotes") 
 
 url_eft = "https://escapefromtarkov.gamepedia.com/Ballistics"
 ```
 
-```{r simple case}
+```{r inspect HTML}
 
-sample = url %>%
+# tutorial: https://medium.com/@kyleake/wikipedia-data-scraping-with-r-rvest-in-action-3c419db9af2d
+
+# XPath from the first table containing Abkhazia
+# /html/body/div[3]/div[3]/div[4]/div/table[1]
+
+url %>%
   read_html() %>%
   html_node("body")
+# /html/body
 
-sample2 = sample %>%
+url %>%
   read_html() %>%
-  html_node("body")
-str(sample)
-    
-    
-# use # in front of an "id" element
-# use . in front of a "class" element
-# use a, div, h1, h2, h3 or body to get into the specified chunk
+  html_node("body #content")
+# /html/body/div[3]
+# Which is the THIRD div under the upper body
 
-sample = url %>%
+url %>%
+  read_html() %>%
+  html_node("body #content #bodyContent #mw-content-text")
+# /html/body/div[3]/div[3]/div[4]
+# Which is the FOURTH div under the upper body
+
+url %>%
+  read_html() %>%
+  html_node("body #content #bodyContent #mw-content-text .mw-parser-output h3 .mw-headline")
+
+# Both return a data frame
+sample1 = url %>%
   read_html() %>%
   html_node('body #content #bodyContent #mw-content-text .mw-parser-output table') %>%
   html_table(fill = TRUE)
-str(sample)
 
-
-#/html/body/div[3]/div[3]/div[4]/div/table[2]/tbody/tr[1]/th[2]
-```
-
-```{r simple case}
-
-sample2 = url_eft %>%
-  read_html() %>%
-  html_node('body #content #bodyContent #mw-content-text .mw-parser-output table') %>%
-  html_table(fill = TRUE)
-str(sample)
-
-
-# Return a data frame
 sample2 = url %>%
   read_html() %>%
   html_node(xpath = '//*[@id="mw-content-text"]/div/table[1]') %>%
   html_table(fill = TRUE)
 
-# Return a list
+sample1 == sample2 # All true, same dataframe
+
+# Returns a list instead of a dataframe
 sample3 = url %>%
   read_html() %>%
   html_nodes(xpath = '//*[@id="mw-content-text"]/div/table[1]') %>%
   html_table(fill = TRUE)
-sample3 = sample3[[1]]
 
-sample_all = rbind(sample, sample2, sample3)
+sample3[[1]] == sample2 # All true, same dataframe when you call the first element of sample3
 
 # Language of rvest
 # Use # in front of 'id' element
 # Use . in front of 'class' element
 # Use a, div, h1, h2, h3, or body to get into that chunk
 
+
+
+
+
+# EFT
+#/html/body/div[2]/div[3]/div[1]/div[4]/div[4]/div/table[2]
+
+table_eft <- url_eft %>%
+  read_html() %>%
+  html_node("body #global-wrapper #pageWrapper #content #bodyContent #mw-content-text .mw-parser-output table") %>%
+  html_table(fill = TRUE)
+
+table_eft <- url_eft %>%
+  read_html() %>%
+  html_node(xpath = '//*[@id="mw-content-text"]/div/table[2]') %>%
+  html_table(fill = TRUE)
+
+view(table_eft)
+
+```
+
+```{r calling the tables}
+
 # html_node (get only the top one) vs. html_nodes (get multiple of them)
+
+
+countries = url2 %>%
+  html_nodes("body #content #bodyContent #mw-content-text .mw-parser-output h3 .mw-headline ") %>%
+  html_text() %>%
+  as.character()
+
+
+
+
+```
+
+```{r calling the tables}
 countries = url2 %>%
   html_nodes("body #content #bodyContent #mw-content-text .mw-parser-output h3 .mw-headline") %>%
   html_text() %>%
@@ -102,7 +144,7 @@ num_tables = url2 %>%
   length() %>%
   as.character()
 print(paste('There are', num_tables, 'tables in total'))
-
+str(num_tables)
 # This condition needs to be true to proceeed
 length(countries) == num_tables # TRUE
 
@@ -237,13 +279,5 @@ df_all = df_all[, c('iteration',
 
 # export the csv file
 write_excel_csv(df_all, '../Playground/Bank_Notes-Wiki_Webscraping/output_bank_notes/wiki_bank_notes_data.csv')
-
-```
-
-```{r export}
-graph_h = 2
-graph_w = 4
-
-ggsave(filename = "p_askd_qpcr.tiff", p_askd_qpcr, width = graph_w, height = graph_h, dpi = 400, units = "in", device='tiff')
 
 ```
